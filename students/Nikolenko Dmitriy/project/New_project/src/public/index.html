@@ -10,16 +10,18 @@
 </head>
 <body>
     <header>
+        
         <div class="logo">E-shop</div>
-        <div class="cart">
+        
+        <div class="cart" id="app2">
             <form action="#" class="search-form">
                 <input type="text" class="search-field">
                 <button class="btn-search">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
-            <button class="btn-cart">Cart</button>
-            <div class="cart-block ">
+            <button class="btn-cart" @click = "show = !show">Cart</button>
+            <div class="cart-block " v-show = "show">
                 <div class="d-flex">
                     <strong class="d-block">Всего товаров</strong> <div id="quantity"></div>
                 </div>
@@ -35,9 +37,29 @@
         </div>
     </header>
     <main>
-        <div class="products"></div>
+        <div id="app">
+            <div class="products">
+            <div class="products-item" v-for = "item of items">
+                <img src="https://placehold.it/300x200" alt="">
+                <div class="desc">
+                    <h1>{{ item.product_name }}</h1>
+                    <p>{{ item.price }}</p>
+                    <button class="buy-bot">Купить</button>
+                </div>
+            </div>
+        </div>
+
+      <!--  <div v-show="show">
+            <h1>{{ info }}</h1>
+            <input type="text" v-model.lazy="info">
+        </div>
+        <button @click = "Show()">{{ show ? 'Скрыть' : 'Показать' }}</button>
+         --> 
+        </div>
+
+        
     </main>
-    
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
     <script src="js/main.js"></script>
 </body>

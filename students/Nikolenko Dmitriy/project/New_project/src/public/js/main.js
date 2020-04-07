@@ -1,6 +1,38 @@
- let API = 'https://raw.githubusercontent.com/Dmitriy-Nikolenko/online-store-api/master/responses';
+// let API = 'https://github.com/Dmitriy-Nikolenko/online-store-api/tree/master/responses';
 
- class List {
+let app = new Vue({
+    el: '#app',
+    data: {
+        url : 'https://raw.githubusercontent.com/Dmitriy-Nikolenko/online-store-api/master/responses/catalogData.json',
+        items: [],
+         },
+    methods: {
+        async getData() {
+            try {
+                 this.items = await fetch(this.url).then(d => d.json())
+            }
+            catch(err) {
+                console.log(err);
+            }
+            finally {
+                console.log(this.items);
+            }
+        },
+        Show() {
+            this.show = !this.show
+        }
+    },
+    mounted() {
+        this.getData();
+    }
+}) 
+let app2 = new Vue ({
+    el: '#app2',
+    data: {
+        show: false,
+    }
+})
+ /*class List {
      constructor(url, container) {
         this.url = url;
         this.container = container;
@@ -189,4 +221,4 @@ let lists = {
     let cart = new Cart();
     catalog.cart = cart;
 
- 
+ */

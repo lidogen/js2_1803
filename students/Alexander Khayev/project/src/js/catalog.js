@@ -12,16 +12,42 @@ import HTTP from './api';
 
 export default class Catalog {
   constructor(cart) {
-    this.items = [];
+    this._items = [];
+    this.showItems = [];
     this.container = '.products';
     this.cart = cart;
     this._init(); //_ - это обозначение инкапсулированного метода
+    this._searchFilter = "";
+  }
+
+  get searchFilter() {
+    return this._searchFilter;
+  }
+
+  set searchFilter(value) {
+    if (value !== this._searchFilter) {
+      this._searchFilter = value.toLowerCase();
+      this.items = this._items;
+    }
+  }
+
+  get items() {
+    return this.showItems;
+  }
+
+  set items(value) {
+    this._items = value;
+    this.showItems = this._items.filter(item =>
+      this.searchFilter === "" ||
+      item.product_name.toLowerCase().includes(this.searchFilter));
   }
 
   _init() {
     this._handleData()
-      .then(() => {return this.render()})
-      .then(() => {this._handleEvents()});
+      //.then(() => {return this.render()})
+      .then(() => {
+        this._handleEvents()
+      });
   }
 
   _handleEvents() {
@@ -58,32 +84,32 @@ export default class Catalog {
   //   }
   // }
 
-  render() {
-    return new Promise((resolve, reject) => {
-      let str = '';
-      this.items.forEach(item => {
-        str += `
-                <div class="product-item">
-                    <!--img src="https://placehold.it/300x200" alt="${item.product_name}"-->
-                    <img src="${item.img}" width="300" height="200" alt="${item.product_name}">
-                    <div class="desc">
-                        <h1>${item.product_name}</h1>
-                        <p>${item.price}</p>
-                        <button
-                        class="buy-btn"
-                        name="buy-btn"
-                        data-name="${item.product_name}"
-                        data-price="${item.price}"
-                        data-id="${item.id_product}"
-                        >Купить</button>
-                    </div>
-                </div>
-            `
-      });
-      resolve(str);
-    }).then(str => {
-      document.querySelector(this.container).innerHTML = str;
-    });
-  }
+  // render() {
+  //   return new Promise((resolve, reject) => {
+  //     let str = '';
+  //     this.items.forEach(item => {
+  //       str += `
+  //               <div class="product-item">
+  //                   <!--img src="https://placehold.it/300x200" alt="${item.product_name}"-->
+  //                   <img src="${item.img}" width="300" height="200" alt="${item.product_name}">
+  //                   <div class="desc">
+  //                       <h1>${item.product_name}</h1>
+  //                       <p>${item.price}</p>
+  //                       <button
+  //                       class="buy-btn"
+  //                       name="buy-btn"
+  //                       data-name="${item.product_name}"
+  //                       data-price="${item.price}"
+  //                       data-id="${item.id_product}"
+  //                       >Купить</button>
+  //                   </div>
+  //               </div>
+  //           `
+  //     });
+  //     resolve(str);
+  //   }).then(str => {
+  //     document.querySelector(this.container).innerHTML = str;
+  //   });
+  //}
 }
 
