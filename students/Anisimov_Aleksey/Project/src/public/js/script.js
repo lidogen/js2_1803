@@ -5,20 +5,37 @@ let app = new Vue({
         api_url: 'https://static.trendco.space/js-adv/responses/',
         items: {},
         cart: {},
+        searchStr: '',
+        whiteListRegExp: /[^0-9a-zа-я.-\s]/gi, //для строки поиска
+        filteredItems: {},
         isVisibleCart: false,
     },
     methods: {
         async getData(url) {
             try {
                 this.items = await fetch(this.api_url + url).then(res => res.json())
+                this.filteredItems = this.items
             }
             catch(err) {
                 console.log(err);
             }
+        },
+        filterGoods(event) {
+            this.checkSearchStr() // приводим строку поиска к норм формату
+            let regexp = new RegExp(this.searchStr, 'i') // создали регулярку
+            this.filteredItems = this.items.filter(good => regexp.test(good.title)) // отфильтровали и записали, следом сразу рендер
+        },
+        checkSearchStr() {
+            this.searchStr = (this.searchStr.trim()).replace(/\s{2,}/g, ' ') // сначала тримим, потом азмена множественных пробелов на один
+            this.searchStr = this.searchStr.replace(this.whiteListRegExp, '') // тут делаем замену в строке, останутся только разрешенные символы
+        },
+        addToCart(event) {
+            console.log(event);
+            
         }
     },
     computed: {
-
+        
     },
     mounted() {
         this.getData('goods.json')

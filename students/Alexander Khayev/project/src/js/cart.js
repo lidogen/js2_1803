@@ -9,12 +9,14 @@ export default class Cart {
     this.quantityBlock = document.querySelector('#quantity');
     this.priceBlock = document.querySelector('#price');
     this._init()
+
+    console.log('Cart init...');
   }
 
   _init() {
     this._initItems()
       .then( r=> {
-        this._handleEvents();
+        //this._handleEvents();
       })
   }
 
@@ -22,11 +24,14 @@ export default class Cart {
     return this.items.find(product => +product.id_product === +id);
   }
 
+  clickDeleteEvent(evt) {
+    if (evt.target.name === 'del-btn') {
+      this.deleteProduct(evt.target)
+    }
+  }
   _handleEvents() {
     document.querySelector(this.container).addEventListener('click', (evt) => {
-      if (evt.target.name === 'del-btn') {
-        this.deleteProduct(evt.target)
-      }
+      clickDeleteEvent(evt);
     })
   }
 
@@ -40,7 +45,7 @@ export default class Cart {
 
   _update() {
     this._checkTotalAndSum();
-    return this.render();
+    //return this.render();
   }
 
   addProduct(productNode) {
@@ -124,30 +129,30 @@ export default class Cart {
     this.sum = pr;
   }
 
-  render() {
-    let itemsBlock = document.querySelector(this.container).querySelector('.cart-items');
-    return new Promise((resolve, reject) => {
-      let str = '';
-      this.items.forEach(item => {
-        str += `<div class="cart-item" data-id="${item.id_product}">
-                    <img src="${item.img}" alt="" >
-                    <div class="product-desc">
-                        <p class="product-title">${item.product_name}</p>
-                        <p class="product-quantity">${item.quantity}</p>
-                        <p class="product-single-price">${item.price}</p>
-                    </div>
-                    <div class="right-block">
-                        <button name="del-btn" class="del-btn" data-id="${item.id_product}">&times;</button>
-                    </div>
-                </div>`
-      });
-      resolve(str);
-    })
-      .then(msg => {
-        itemsBlock.innerHTML = msg;
-        this.quantityBlock.innerText = this.total;
-        this.priceBlock.innerText = this.sum;
-      });
-
-  }
+  // render() {
+  //   let itemsBlock = document.querySelector(this.container).querySelector('.cart-items');
+  //   return new Promise((resolve, reject) => {
+  //     let str = '';
+  //     this.items.forEach(item => {
+  //       str += `<div class="cart-item" data-id="${item.id_product}">
+  //                   <img src="${item.img}" alt="" >
+  //                   <div class="product-desc">
+  //                       <p class="product-title">${item.product_name}</p>
+  //                       <p class="product-quantity">${item.quantity}</p>
+  //                       <p class="product-single-price">${item.price}</p>
+  //                   </div>
+  //                   <div class="right-block">
+  //                       <button name="del-btn" class="del-btn" data-id="${item.id_product}">&times;</button>
+  //                   </div>
+  //               </div>`
+  //     });
+  //     resolve(str);
+  //   })
+  //     .then(msg => {
+  //       itemsBlock.innerHTML = msg;
+  //       this.quantityBlock.innerText = this.total;
+  //       this.priceBlock.innerText = this.sum;
+  //     });
+  //
+  // }
 }

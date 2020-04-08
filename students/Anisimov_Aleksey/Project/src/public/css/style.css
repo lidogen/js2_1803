@@ -24,6 +24,10 @@
           justify-content: flex-end;
 }
 
+.search {
+  margin-right: 20px;
+}
+
 .product {
   margin-top: 30px;
   display: -webkit-box;
@@ -128,5 +132,107 @@
 
 .hidden {
   display: none;
+}
+
+.cart {
+  position: relative;
+}
+
+.cart__counter {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: -10px;
+  right: -10px;
+  border-radius: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: red;
+  padding: 1px;
+}
+
+.cart__item {
+  padding: 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.cart__button {
+  padding: 5px 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  border: 1px solid #ebebeb;
+}
+
+.cart__button:hover {
+  cursor: pointer;
+}
+
+.cart__action {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 32px;
+  font-weight: bold;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: 0;
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.cart__block {
+  position: absolute;
+  right: 0;
+  top: 130%;
+  width: 300px;
+  border: 1px solid #cccccc;
+  -webkit-box-shadow: 0 0 3px 1px #000;
+          box-shadow: 0 0 3px 1px #000;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.cart__empty {
+  right: 0;
+  width: 150px;
+  position: absolute;
+  background-color: #fff;
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid #cccccc;
+  -webkit-box-shadow: 0 0 3px 1px #000;
+          box-shadow: 0 0 3px 1px #000;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.cart__hr {
+  margin: 5px 0;
+}
+
+.cart__p {
+  font-size: 18px;
+  font-weight: bold;
 }
 /*# sourceMappingURL=style.css.map */
