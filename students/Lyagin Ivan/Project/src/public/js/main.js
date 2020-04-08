@@ -1,5 +1,5 @@
 
-let API = 'https://raw.githubusercontent.com/Niga9L/js2_1803/master/students/Ostrovskaya%20Elena/Others/basket'; // /getBasket.json
+let API = 'https://raw.githubusercontent.com/Niga9L/js2_1803/master/students/Alexander%20Khayev/project/src/api/'; // /getBasket.json
 
 class List {
     //catalog and cart
@@ -62,7 +62,7 @@ class ListItem {
                             name="buy-btn"
                             data-name="${this.item.product_name}"
                             data-price="${this.item.price}"
-                            data-id="${this.item.id}"
+                            data-id="${this.item.id_product}"
                         >Купить</button>
                     </div>
                 </div>
@@ -72,7 +72,7 @@ class ListItem {
 
 class Catalog extends List {
     constructor(url, container) {
-        super(url = '/my_store.json', container = '.products');
+        super(url = 'catalogData.json', container = '.products');
         this.cart = null;
     }
     _init() {
@@ -98,7 +98,7 @@ class Catalog extends List {
 
 class Cart extends List {
     constructor(url, container) {
-        super(url = '/cart_produt.json', container = '.cart-items');
+        super(url = 'getBasket.json', container = '.cart-items');
         this.cartList = {};
         this.cartMass = [];
     }
@@ -124,7 +124,7 @@ class Cart extends List {
     deleteProduct(item){
 
         for(let i = 0; i < this.cartMass.length; i++) {
-            if( this.cartMass[i].id === item.dataset.id) {
+            if( this.cartMass[i].id_product === item.dataset.id) {
                 this.cartMass.splice(i,1);
             }
         }
@@ -143,20 +143,21 @@ class Cart extends List {
         }
         console.log(this.cartList);*/
 
-        if (this.cartMass.find(id => id.id === item.dataset.id)){
+        if (this.cartMass.find(id => id.id_product === item.dataset.id)){
 
-            this.cartMass.find(id => id.id === item.dataset.id).count++;
+            this.cartMass.find(id => id.id_product === item.dataset.id).count++;
 
         } else {
 
             this.cartMass.push({
-                id: item.dataset.id,
+                id_product: item.dataset.id,
                 product_name: item.dataset.name,
                 price: item.dataset.price,
                 count: 1,
             })
         }
-
+        console.log(item);
+        console.log(this.cartMass);
 
     }
     getTotalPrice() {
@@ -167,7 +168,7 @@ class Cart extends List {
 
     }
     renderPrice() {
-        let priceBox = document.getElementById("price")
+        let priceBox = document.getElementById("price");
         priceBox.innerText = this.totalPrice;
     }
     renderIndex(){
@@ -193,16 +194,16 @@ class Cart extends List {
         }
         render() {
             //debugger
-
-            return `<div class="cart-item" data-id="${this.item.id}">
+            console.log(this.item);
+            return `<div class="cart-item" data-id="${this.item.id_product}">
                     <img src="${this.img}" alt="">
                     <div class="product-desc">
                         <p class="product-title">${this.item.product_name}</p>
-                        <p class="product-quantity">${this.item.quantity}</p>
+                        <p class="product-quantity">${this.item.count}</p>
                         <p class="product-single-price">${(this.item.price)*this.item.count}</p>
                     </div>
                     <div class="right-block">
-                        <button name="del-btn" class="del-btn" data-id="${this.item.id}">&times;</button>
+                        <button name="del-btn" class="del-btn" data-id="${this.item.id_product}">&times;</button>
                     </div>
                 </div>`
         }
@@ -214,7 +215,7 @@ class Cart extends List {
     };
 
     export default function () {
-    let test = new List('/my_store.json');
+    let test = new List('catalogData.json');
     let testCat = new Catalog();
     let testCrt = new Cart();
 
