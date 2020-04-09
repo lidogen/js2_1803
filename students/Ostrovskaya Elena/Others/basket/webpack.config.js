@@ -1,5 +1,6 @@
 let miniCss = require('mini-css-extract-plugin')
 let htmlPlugin = require('html-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     module: {
@@ -16,15 +17,20 @@ module.exports = {
                     },
                     'css-loader',
                 ]
-            },
-            {
-                test: /\.(png|jpg|gif|svg)$/,
-                include: /img/,
-                loader: 'url-loader'
             }
         ]
     },
     plugins: [
+        new CopyPlugin([
+            { from: '.src/public/img', to: './img' },
+            { from: './src/**/*.json',
+            to: 'api/[name].[ext]'},
+            { from: './src/**/*.jpg',
+                to: 'img/[name].[ext]'},
+            { from: './src/**/*.png',
+                to: 'img/[name].[ext]'}
+          ]),
+
         new miniCss({
             filename: 'css/[name].css',
             chunkFilename: '[id].css',
