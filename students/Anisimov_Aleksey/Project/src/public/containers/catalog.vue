@@ -15,7 +15,8 @@ export default {
             items: [],
             searchStr: '',
             filteredItems: [],
-            url: 'https://static.trendco.space/js-adv/responses/goods.json'
+            url: '/api/catalog'
+            //url: 'https://static.trendco.space/js-adv/responses/goods.json'
         }
     },
     methods: {
