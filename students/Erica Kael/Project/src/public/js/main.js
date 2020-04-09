@@ -1,33 +1,4 @@
-let app = new Vue({
-    el: '#app',
-    data:{
-        url: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json',
-        items: [],
-        show: false
-    },
-    methods:{
-        async getData() {
-            try {
-               this.items = await fetch(this.url).then(d => d.json()) 
-            }
-            catch(err) {
-                console.log(err)
-            }
-            finally {
-                console.log(this.items)
-            }
-        }
-    },
-    computed:{
-
-    },
-    mounted(){
-        this.getData()
-    }
-})
-
-
-/*const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
 
 class List{
@@ -131,7 +102,7 @@ class Cart extends List{
             .then(() => {this.render()})
             .finally(() => {
                 this._handleEvents()
-            })
+            })*/
             this._handleEvents()
     }
     _handleEvents () {
@@ -220,7 +191,7 @@ export default function app(){
     let cart = new Cart()
 
     catalog.cart = cart
-}*/
+}
  
  /*//ИМИТАЦИЯ РАБОТЫ БАЗЫ ДАННЫХ И СЕРВЕРА
 
