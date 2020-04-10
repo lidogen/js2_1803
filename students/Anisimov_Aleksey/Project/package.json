@@ -22,6 +22,7 @@
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "babel-loader": "^8.1.0",
+    "body-parser": "^1.19.0",
     "css-loader": "^3.4.2",
     "dotenv": "^8.2.0",
     "html-webpack-plugin": "^4.0.2",

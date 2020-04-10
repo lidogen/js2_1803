@@ -28,12 +28,12 @@ export default {
         }
     },
     methods: {
-        // isCartEmpty() {
-        //     if (this.items.length === 0) {
-        //         return true
-        //     }
-        //     return false
-        // },
+        isCartEmpty() {
+            if (this.items.length === 0) {
+                return true
+            }
+            return false
+        },
         hideCart() {
             if (this.isCartEmpty()) {
                 this.isVisibleCart = false
@@ -56,12 +56,6 @@ export default {
         
     },
     computed: {
-        isCartEmpty() {
-            if (this.items.length === 0) {
-                return true
-            }
-            return false
-        },
         totalCartItems() {
             let totalQtt = null
             this.items.forEach(element => {
@@ -78,7 +72,7 @@ export default {
         }
     },
     updated() {
-        if (!this.isCartEmpty()) {
+        if (!this.isCartEmpty) {
             this.isEmptyCart = false
         }
     }
