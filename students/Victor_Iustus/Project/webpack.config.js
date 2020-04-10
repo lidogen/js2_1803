@@ -1,5 +1,7 @@
-const miniCss       = require('mini-css-extract-plugin')
-const htmlPlugin    = require('html-webpack-plugin')
+const miniCss = require('mini-css-extract-plugin')
+const htmlPlugin = require('html-webpack-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     module: {
@@ -17,6 +19,16 @@ module.exports = {
                     'css-loader',
                 ]
             },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader'
+            },
+            {
+                test: /\.vue$/,
+                exclude: /node_modules/,
+                loader: 'vue-loader'
+            }
         ]
     },
     plugins: [
@@ -26,10 +38,12 @@ module.exports = {
             ignoreOrder: false,
         }), 
         new htmlPlugin({
-            favicon: "./src/favicon.ico",
-            filename: "index.html",
             template: './src/public/index.html'
         }),
+        new CopyPlugin([
+            { from: './src/public/assets', to: './' },
+        ]),
+        new VueLoaderPlugin()
     ],
     devServer: {
         open: true,
