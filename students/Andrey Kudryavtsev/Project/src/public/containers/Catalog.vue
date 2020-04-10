@@ -22,8 +22,6 @@ export default {
         },
         setShowItems(search){
             this.showItem = this.items.filter(item => search == "" || item.product_name.toLowerCase().includes(search))
-            console.log(this.showItem)
-            console.log(search)
         }
     },
     // computed: {

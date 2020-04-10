@@ -29,8 +29,59 @@ export default {
     methods: {
         getData(url) {
             return fetch(url).then(dataReceived => dataReceived.json())
+        },
+        postData(url, obj){
+            try {
+                const response = await fetch(url, {
+                    method: 'POST', // или 'PUT'
+                    body: JSON.stringify(obj), // данные могут быть 'строкой' или {объектом}!
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const json = await response.json()
+                console.log('Успех:', JSON.stringify(json))
+            } catch (error) {
+                console.error('Ошибка:', error)
+            }
+        },
+        changeData(url, obj){
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT', // или 'PUT'
+                    body: JSON.stringify(obj), // данные могут быть 'строкой' или {объектом}!
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const json = await response.json()
+                console.log('Успех:', JSON.stringify(json))
+            } catch (error) {
+                console.error('Ошибка:', error)
+            }
         }
+
+    
+    //     postData (url, obj) {
+    //         return fetch(url, {
+    //             method: 'POST',
+    //             headers: {"Content-Type": "application/json"},
+    //             body: JSON.stringify(obj)
+    //         }).then(data => data.json())
+    //     },
+    //     changeData (url, obj) {
+    //         return fetch(url, {
+    //             method: 'PUT',
+    //             headers: {"Content-Type": "application/json"},
+    //             body: JSON.stringify(obj)
+    //         }).then(data => data.json())
+    //     },
+    //     deleteData(url, obj) {  
+    //         return fetch(url, {
+    //             method: 'DELETE',
+    //             headers: {"Content-Type": "application/json"},
+    //             body: JSON.stringify(obj)
+    //         }).then(data => data.json())
+    //     }
+
     }
+
 }
 </script>
 
