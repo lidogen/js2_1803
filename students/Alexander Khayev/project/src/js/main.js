@@ -7,6 +7,7 @@ export default function app() {
   const app = new Vue({
     el: '#app',
     data: {
+      show: true,
       name: 'Geek',
       cartTitle: 'Корзина',
       totalItemsTitle: 'Всего товаров: ',
