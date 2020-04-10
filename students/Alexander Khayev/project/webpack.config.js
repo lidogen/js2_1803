@@ -2,6 +2,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const miniCss = require('mini-css-extract-plugin');
 const htmlPlugin = require('html-webpack-plugin');
+const vueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
   // context: path.join(__dirname, 'your-app'),
@@ -22,6 +23,7 @@ module.exports = {
         ignoreOrder: false
       }
     ),
+    new vueLoaderPlugin(),
     new htmlPlugin(
       {
         template: './src/index.html',
@@ -41,6 +43,16 @@ module.exports = {
           }
         }, 'css-loader'],
       },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.vue$/,
+        exclude: /node_modules/,
+        loader: 'vue-loader',
+      }
     ],
   },
   devServer: {

@@ -20,7 +20,7 @@ let app = new Vue({
                 console.log(err);
             }
         },
-        filterGoods() {
+        filterGoods(event) {
             this.checkSearchStr() // приводим строку поиска к норм формату
             let regexp = new RegExp(this.searchStr, 'i') // создали регулярку
             this.filteredItems = this.items.filter(good => regexp.test(good.title)) // отфильтровали и записали, следом сразу рендер
@@ -29,6 +29,10 @@ let app = new Vue({
             this.searchStr = (this.searchStr.trim()).replace(/\s{2,}/g, ' ') // сначала тримим, потом азмена множественных пробелов на один
             this.searchStr = this.searchStr.replace(this.whiteListRegExp, '') // тут делаем замену в строке, останутся только разрешенные символы
         },
+        addToCart(event) {
+            console.log(event);
+            
+        }
     },
     computed: {
         
