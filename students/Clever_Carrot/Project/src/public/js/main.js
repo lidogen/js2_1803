@@ -25,7 +25,7 @@ let catalog = new Vue({
 })
 
 let cart = new Vue({
-    el: '#cart',
+    //el: '#cart',
     data: {
         url: 'getBasket.json',
         items: [],
