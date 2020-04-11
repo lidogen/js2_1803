@@ -17,7 +17,7 @@
                 <p class="product-single-price">{{item.price}}</p>
             </div>
             <div class="right-block">
-                <button name="del-btn" class="del-btn" data-id="item.id_product"  @click="$root.$children[0].$refs.cart.deleteProduct(item)">&times;</button>
+                <button name="del-btn" class="del-btn" data-id="item.id_product"  @click="$emit('delete', item)">&times;</button>
             </div>
         </template>
     </div>
