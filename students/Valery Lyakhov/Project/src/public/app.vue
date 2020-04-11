@@ -2,27 +2,15 @@
     <div>
         <header>
             <div class="logo">E-shop</div>
-            <div class="cart" id="cart-block">
+            <div class="cart">
                 <form action="#" class="search-form">
                     <input type="text" class="search-field">
                     <button class="btn-search">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
-                <button @click="show = !show" class="btn-cart">{{ show ? 'Скрыть' : 'Показать' }} корзину</button>
-                <div class="cart-block" v-show="show">
-                    <div class="d-flex">
-                        <strong class="d-block">Всего товаров</strong> <div id="quantity"></div>
-                    </div>
-                    <hr>
-                    <div class="cart-items">
-                        
-                    </div>
-                    <hr>
-                    <div class="d-flex">
-                        <strong class="d-block">Общая ст-ть:</strong> <div id="price"></div>
-                    </div>
-                </div>
+                <button class="btn-cart" @click="showCart = !showCart">Cart</button>
+                <cart v-show="showCart" ref="cartRef"/>
             </div>
         </header>
         <main>
@@ -32,9 +20,16 @@
 </template>
 
 <script>
+//add packages (imports)
 import catalog from './containers/Catalog.vue'
+import cart from './containers/Cart.vue'
 export default {
-    components: { catalog },  
+    components: { catalog, cart },
+    data() {
+        return {
+            showCart: false
+        }
+    },
     methods: {
         getData(url) {
             return fetch(url).then(dataReceived => dataReceived.json())
