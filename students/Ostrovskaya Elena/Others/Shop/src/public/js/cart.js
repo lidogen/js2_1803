@@ -1,9 +1,10 @@
-class Cart {
-    constructor(){
-        this.items = [];
+import List from './List.js'
+
+export default class Cart extends List{
+    constructor(url, container) {
+        super(url = '/getBasket.json', container = '.cart-items');
         this.total = 0;
         this.sum = 0;
-        this.container = document.querySelector ('.cart-block');
         this.quantityBlock = document.querySelector ('#quantity');
         this.priceBlock = document.querySelector ('#price');
     }
@@ -13,7 +14,6 @@ class Cart {
      *
      */
     _handleEvents () {
-        console.log("cart");
         this.container.addEventListener ('click', (evt) => {
             if (evt.target.name === 'del-btn') {
                 this.deleteProduct (evt.target)
@@ -21,28 +21,51 @@ class Cart {
         })
     }
 
+    handlerCatalogClick(evt){
+        if (evt.target.name === 'buy-btn') {
+            this.addProduct(evt.target)
+        }
+    }
+
+
+    /**
+     *Создаем каталог
+     */
+    _init () { 
+        this.getData(this.url)
+            .then(data => {this.items = data.contents})
+            .then(() => {this.changeCart()})
+            .finally(() => {
+                this._handleEvents()
+            })
+    }
+
     /**
      *Удаляет выбранный продукт
-     *
-     * @param {*} product
      */
     deleteProduct (product) {
-        let id = product.dataset['id'];
-        let find = this.items.find (product => product.id_product === id);
+        let id = +product.dataset['id'];
+        let find = this.items.find(product => product.id_product === id);
         if (find.quantity > 1) {
             find.quantity--;
         } else {
             this.items.splice (this.items.indexOf(find), 1);
         }
-         
+        this.changeCart() 
+        
+    }
+
+    changeCart(){
         this._checkTotalAndSum ();
         this.render ();
+        this.quantityBlock.innerText = this.total
+        this.priceBlock.innerText = this.sum
     }
+
+    
     
     /**
      *Считает общую сумму товаров
-     *
-     * @memberof Cart
      */
     _checkTotalAndSum () {
         let qua = 0;
@@ -54,58 +77,25 @@ class Cart {
         this.total = qua;
         this.sum = pr;
     }
-    /**
-     *Вставляет товары в HTML-разметку корзины
-     *
-     * @memberof Cart
-     */
-    render () {
-        let itemsBlock = this.container.querySelector ('.cart-items')
-        let str = ''
-        this.items.forEach (item => {
-            str += `<div class="cart-item" data-id="${item.id_product}">
-                    <img src="https://placehold.it/100x80" alt="">
-                    <div class="product-desc">
-                        <p class="product-title">${item.product_name}</p>
-                        <p class="product-quantity">${item.quantity}</p>
-                        <p class="product-single-price">${item.price}</p>
-                    </div>
-                    <div class="right-block">
-                        <button name="del-btn" class="del-btn" data-id="${item.id_product}">&times;</button>
-                    </div>
-                </div>`
-        })
-        itemsBlock.innerHTML = str
-        this.quantityBlock.innerText = this.total
-        this.priceBlock.innerText = this.sum
-    }
 
     /**
      *Добавляет товар в корзину
-     *
-     * @param {*} product
-     * @memberof Cart
      */
     addProduct (product) {
-        let id = product.dataset['id'];
+        let id = +product.dataset['id'];
         let find = this.items.find (product => product.id_product === id);
         if (find) {
             find.quantity++;
         } else {
             let prod = this._createNewProduct (product);
             this.items.push (prod);
-        }
-         
-        this._checkTotalAndSum ();
-        this.render ();
+        }      
+        this.changeCart() 
     }
 
     /**
      *Возвращает массив с параметрами товара
      *
-     * @param {*} prod
-     * @returns
-     * @memberof Cart
      */
     _createNewProduct (prod) {
         return {

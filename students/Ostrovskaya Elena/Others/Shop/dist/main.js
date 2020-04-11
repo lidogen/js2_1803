@@ -94,7 +94,79 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _public_js_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./public/js/main.js */ \"./src/public/js/main.js\");\n/* harmony import */ var _public_js_main_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_public_js_main_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _public_style_style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./public/style/style.css */ \"./src/public/style/style.css\");\n/* harmony import */ var _public_style_style_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_public_style_style_css__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _public_style_normalize_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./public/style/normalize.css */ \"./src/public/style/normalize.css\");\n/* harmony import */ var _public_style_normalize_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_public_style_normalize_css__WEBPACK_IMPORTED_MODULE_2__);\n\r\n\r\n\r\n\r\n\r\n\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _public_js_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./public/js/main.js */ \"./src/public/js/main.js\");\n/* harmony import */ var _public_style_style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./public/style/style.css */ \"./src/public/style/style.css\");\n/* harmony import */ var _public_style_style_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_public_style_style_css__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _public_style_normalize_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./public/style/normalize.css */ \"./src/public/style/normalize.css\");\n/* harmony import */ var _public_style_normalize_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_public_style_normalize_css__WEBPACK_IMPORTED_MODULE_2__);\n\r\n\r\n\r\n\r\n\r\n\r\n\n\n//# sourceURL=webpack:///./src/index.js?");
+
+/***/ }),
+
+/***/ "./src/public/js/Cart.js":
+/*!*******************************!*\
+  !*** ./src/public/js/Cart.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Cart; });\n/* harmony import */ var _List_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./List.js */ \"./src/public/js/List.js\");\n\r\n\r\nclass Cart extends _List_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]{\r\n    constructor(url, container) {\r\n        super(url = '/getBasket.json', container = '.cart-items');\r\n        this.total = 0;\r\n        this.sum = 0;\r\n        this.quantityBlock = document.querySelector ('#quantity');\r\n        this.priceBlock = document.querySelector ('#price');\r\n    }\r\n\r\n    /**\r\n     *Обработчик события - нажатие на кнопку удалить продукта в корзине\r\n     *\r\n     */\r\n    _handleEvents () {\r\n        this.container.addEventListener ('click', (evt) => {\r\n            if (evt.target.name === 'del-btn') {\r\n                this.deleteProduct (evt.target)\r\n            }\r\n        })\r\n    }\r\n\r\n    handlerCatalogClick(evt){\r\n        if (evt.target.name === 'buy-btn') {\r\n            this.addProduct(evt.target)\r\n        }\r\n    }\r\n\r\n\r\n    /**\r\n     *Создаем каталог\r\n     */\r\n    _init () { \r\n        this.getData(this.url)\r\n            .then(data => {this.items = data.contents})\r\n            .then(() => {this.changeCart()})\r\n            .finally(() => {\r\n                this._handleEvents()\r\n            })\r\n    }\r\n\r\n    /**\r\n     *Удаляет выбранный продукт\r\n     */\r\n    deleteProduct (product) {\r\n        let id = +product.dataset['id'];\r\n        let find = this.items.find(product => product.id_product === id);\r\n        if (find.quantity > 1) {\r\n            find.quantity--;\r\n        } else {\r\n            this.items.splice (this.items.indexOf(find), 1);\r\n        }\r\n        this.changeCart() \r\n        \r\n    }\r\n\r\n    changeCart(){\r\n        this._checkTotalAndSum ();\r\n        this.render ();\r\n        this.quantityBlock.innerText = this.total\r\n        this.priceBlock.innerText = this.sum\r\n    }\r\n\r\n    \r\n    \r\n    /**\r\n     *Считает общую сумму товаров\r\n     */\r\n    _checkTotalAndSum () {\r\n        let qua = 0;\r\n        let pr = 0;\r\n        this.items.forEach (item => {\r\n            qua += item.quantity;\r\n            pr += item.price * item.quantity;\r\n        })\r\n        this.total = qua;\r\n        this.sum = pr;\r\n    }\r\n\r\n    /**\r\n     *Добавляет товар в корзину\r\n     */\r\n    addProduct (product) {\r\n        let id = +product.dataset['id'];\r\n        let find = this.items.find (product => product.id_product === id);\r\n        if (find) {\r\n            find.quantity++;\r\n        } else {\r\n            let prod = this._createNewProduct (product);\r\n            this.items.push (prod);\r\n        }      \r\n        this.changeCart() \r\n    }\r\n\r\n    /**\r\n     *Возвращает массив с параметрами товара\r\n     *\r\n     */\r\n    _createNewProduct (prod) {\r\n        return {\r\n            product_name: prod.dataset['name'],\r\n            price: prod.dataset['price'],\r\n            id_product: prod.dataset['id'],\r\n            quantity: 1\r\n        }\r\n    }\r\n}\r\n\r\n\n\n//# sourceURL=webpack:///./src/public/js/Cart.js?");
+
+/***/ }),
+
+/***/ "./src/public/js/CartItems.js":
+/*!************************************!*\
+  !*** ./src/public/js/CartItems.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return CartItems; });\n/* harmony import */ var _ListItems_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ListItems.js */ \"./src/public/js/ListItems.js\");\n\r\n\r\nclass CartItems extends _ListItems_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"] {\r\n    constructor(item) {\r\n        super(item);\r\n        this.img =\"https://placehold.it/100x80\"\r\n    }\r\n    getProductHTML(){\r\n        return `<div class=\"cart-item\" data-id=\"${this.item.id_product}\">\r\n                    <img src=\"${this.img}\" alt=\"${this.item.product_name}\">\r\n                    <div class=\"product-desc\">\r\n                        <p class=\"product-title\">${this.item.product_name}</p>\r\n                        <p class=\"product-quantity\">${this.item.quantity}</p>\r\n                        <p class=\"product-single-price\">${this.item.price}</p>\r\n                    </div>\r\n                    <div class=\"right-block\">\r\n                        <button name=\"del-btn\" class=\"del-btn\" data-id=\"${this.item.id_product}\">&times;</button>\r\n                    </div>\r\n                </div>`\r\n    }\r\n}\n\n//# sourceURL=webpack:///./src/public/js/CartItems.js?");
+
+/***/ }),
+
+/***/ "./src/public/js/Catalog.js":
+/*!**********************************!*\
+  !*** ./src/public/js/Catalog.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return Catalog; });\n/* harmony import */ var _List_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./List.js */ \"./src/public/js/List.js\");\n\r\n\r\nclass Catalog  extends _List_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]{\r\n    constructor(cart, url, container){\r\n        super(url = '/catalogData.json', container = '.products');\r\n        this.cart = cart;\r\n    }\r\n\r\n    /**\r\n     *Создаем каталог\r\n     */\r\n    _init () { \r\n        this.getData(this.url)\r\n            .then(data => {this.items = data})\r\n            .then(() => {this.render()})\r\n            .finally(() => {\r\n                this._handleEvents()\r\n            })\r\n    }\r\n\r\n\r\n     /**\r\n     *Обработчик события - нажатия на кнопку Купить\r\n     */\r\n    _handleEvents () {\r\n        this.container.addEventListener ('click', this.cart.handlerCatalogClick.bind(this.cart));\r\n    }\r\n}\r\n\n\n//# sourceURL=webpack:///./src/public/js/Catalog.js?");
+
+/***/ }),
+
+/***/ "./src/public/js/CatalogItems.js":
+/*!***************************************!*\
+  !*** ./src/public/js/CatalogItems.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return CartItems; });\n/* harmony import */ var _ListItems_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ListItems.js */ \"./src/public/js/ListItems.js\");\n\r\n\r\nclass CartItems extends _ListItems_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"] {\r\n    constructor(item) {\r\n        super(item);\r\n    }\r\n}\n\n//# sourceURL=webpack:///./src/public/js/CatalogItems.js?");
+
+/***/ }),
+
+/***/ "./src/public/js/List.js":
+/*!*******************************!*\
+  !*** ./src/public/js/List.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return List; });\n/* harmony import */ var _CatalogItems_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CatalogItems.js */ \"./src/public/js/CatalogItems.js\");\n/* harmony import */ var _CartItems_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CartItems.js */ \"./src/public/js/CartItems.js\");\nlet API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses'; \r\n\r\n\r\n\r\n\r\nlet lists = {\r\n    Catalog: _CatalogItems_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"],\r\n    Cart: _CartItems_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]\r\n}\r\n\r\nclass List{\r\n    constructor(url, container){\r\n        this.url = url;\r\n        this.container = document.querySelector(container);\r\n        this.items = [];\r\n        this._init();\r\n    }\r\n\r\n    _init(){\r\n        return false;\r\n    }\r\n\r\n    async getData(){\r\n        const res = await fetch(API + this.url);\r\n        return await res.json();\r\n    }\r\n\r\n    /**\r\n     *Вставляет HTML- разметку товара каталога\r\n     */\r\n    render(){\r\n        let str = '';\r\n        this.items.forEach (item => {\r\n            str += new lists[this.constructor.name](item).getProductHTML();\r\n        })  \r\n        this.container.innerHTML = str;\r\n    }\r\n}\n\n//# sourceURL=webpack:///./src/public/js/List.js?");
+
+/***/ }),
+
+/***/ "./src/public/js/ListItems.js":
+/*!************************************!*\
+  !*** ./src/public/js/ListItems.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"default\", function() { return ListItems; });\nclass ListItems{\r\n    constructor(item){\r\n        this.item = item;\r\n        this.img = 'https://placehold.it/300x200'\r\n    }\r\n    getProductHTML(){\r\n        return `<div class=\"product-item\">\r\n                    <img src=\"${this.img}\" alt=\"${this.item.product_name}\">\r\n                    <div class=\"desc\">\r\n                        <h1>${this.item.product_name}</h1>\r\n                        <p>${this.item.price}</p>\r\n                        <button \r\n                        class=\"buy-btn\" \r\n                        name=\"buy-btn\"\r\n                        data-name=\"${this.item.product_name}\"\r\n                        data-price=\"${this.item.price}\"\r\n                        data-id=\"${this.item.id_product}\"\r\n                        >Купить</button>\r\n                    </div>\r\n                </div>`\r\n    }\r\n}\n\n//# sourceURL=webpack:///./src/public/js/ListItems.js?");
 
 /***/ }),
 
@@ -102,10 +174,11 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _pub
 /*!*******************************!*\
   !*** ./src/public/js/main.js ***!
   \*******************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("\r\n //ИМИТАЦИЯ РАБОТЫ БАЗЫ ДАННЫХ И СЕРВЕРА\r\n\r\n let PRODUCTS_NAMES = ['Processor', 'Display', 'Notebook', 'Mouse', 'Keyboard']\r\n let PRICES = [100, 120, 1000, 15, 18]\r\n let IDS = [0, 1, 2, 3, 4]\r\n let IMGS = ['https://cs8.pikabu.ru/post_img/big/2017/12/25/5/1514188160141511997.jpg', \r\n 'https://store.storeimages.cdn-apple.com/8756/as-images.apple.com/is/HMUB2?wid=1144&hei=1144&fmt=jpeg&qlt=80&op_usm=0.5,0.5&.v=1563827752399',\r\n 'https://zeon18.ru/files/item/Xiaomi-Mi-Notebook-Air-4G-Officially-Announced-Weboo-co-2%20(1)_1.jpg',\r\n 'https://files.sandberg.it/products/images/lg/640-05_lg.jpg',\r\n 'https://images-na.ssl-images-amazon.com/images/I/81PLqxtrJ3L._SX466_.jpg']\r\n\r\n\r\n\r\n console.log(\"main\");\r\n\r\n window.addEventListener('load', function () {\r\n   console.log(\"load\");\r\n   let cart = new Cart ();\r\n   let catalog = new Catalog();\r\n\r\n   catalog._init(cart);\r\n   cart._handleEvents();\r\n})\r\n\n\n//# sourceURL=webpack:///./src/public/js/main.js?");
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Cart_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Cart.js */ \"./src/public/js/Cart.js\");\n/* harmony import */ var _Catalog_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Catalog.js */ \"./src/public/js/Catalog.js\");\n\r\n\r\n //ИМИТАЦИЯ РАБОТЫ БАЗЫ ДАННЫХ И СЕРВЕРА\r\n\r\n\r\n window.addEventListener('load', function () {\r\n   let cart = new _Cart_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"] ();\r\n   let catalog = new _Catalog_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"](cart);\r\n})\r\n\n\n//# sourceURL=webpack:///./src/public/js/main.js?");
 
 /***/ }),
 

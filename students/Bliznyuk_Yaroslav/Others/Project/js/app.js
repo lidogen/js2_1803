@@ -51,6 +51,7 @@ var goodsController = (function(apiCtrl) {
     class GoodsList {
         constructor() {
             this.goods = [];
+            this.filteredGoods = [];
         }
         fetchGoods() {
             this.goods = [
@@ -66,11 +67,13 @@ var goodsController = (function(apiCtrl) {
                 .then(data => {
                     data = JSON.parse(data);
                     data.forEach(function(item, index) {
-                        goodsList.goods.push({
+                        let good_item = {
                             id: item.id_product,
                             title: item.product_name,
                             price: item.price
-                        });  
+                        }
+                        goodsList.goods.push(good_item);  
+                        goodsList.filteredGoods.push(good_item);
                         // console.log(goodsList.goods[index]);  
                     });
                 })
@@ -82,11 +85,18 @@ var goodsController = (function(apiCtrl) {
         }
         render() {
             let listHtml = '';
-            this.goods.forEach(good => {
+            this.filteredGoods.forEach(good => {
                 const goodItem = new GoodsItem(good.id, good.title, good.price);
                 listHtml += goodItem.render();
             });
-            document.querySelector('#catalog').insertAdjacentHTML('beforeend', listHtml);
+            // document.querySelector('#catalog').insertAdjacentHTML('beforeend', listHtml);
+            document.querySelector('#catalog').innerHTML = listHtml;
+        }
+        filterGoods(value) {
+            const regexp = new RegExp(value, 'i');
+            this.filteredGoods = this.goods.filter(good => regexp.test(good.title));
+            this.render();
+            console.log(this);
         }
         getGoodById(id) {
             for (let i=0; i < this.goods.length; i++) {
@@ -248,6 +258,7 @@ var controller = (function(goodsCtrl, cartCtrl) {
         // Bay button:
         document.querySelector('#catalog').addEventListener('click', ctrlAddItemToCart);
         document.querySelector('#cartTable').addEventListener('click', handleCartRowElementsClick);
+        document.querySelector('#header-search').addEventListener('submit', handleHeaderSearch); 
     };
 
     var ctrlAddItemToCart = function(event) {
@@ -278,6 +289,12 @@ var controller = (function(goodsCtrl, cartCtrl) {
             cart.deleteItemById(product_id);
             cart.render();
         }
+    }
+
+    var handleHeaderSearch = function(event) {
+        let searchValue = document.getElementById('header-search-input').value;
+        goodsCtrl.getGoodsList().filterGoods(searchValue);
+        console.log(searchValue);
     }
 
     return {
