@@ -1,43 +1,27 @@
 <template>
-  <div class="cart-block" v-if="cartItems.length == 0">
+  <div class="cart-block" v-if="cartItems.length === 0">
     <h3>Нет данных</h3>
   </div>
-  <div class="cart-block" v-else>
 
+  <div class="cart-block" v-else>
     <div class="d-flex">
       <strong class="d-block">Total items: {{totalItems}} </strong>
-      <div id="quantity"></div>
     </div>
     <hr>
-    <div class="cart-item" :data-id="item.id_product" v-for="item in cartItems" :key="item.id_product">
-      <img :src="item.img" alt="">
-      <div class="product-desc">
-        <p class="product-title">{{ item.product_name }}</p>
-        <p class="product-quantity">{{ item.quantity }}</p>
-        <p class="product-single-price">{{ item.price }}</p>
-      </div>
-      <div class="right-block">
-        <button name="del-btn"
-                class="del-btn"
-                @click="_deleteFromCart"
-                :data-id="item.id_product">&times;
-        </button>
-      </div>
-
-    </div>
-
+    <item v-for="item in cartItems" :key="item.id_product" :item="item" @delete="_deleteFromCart"/>
     <hr>
     <div class="d-flex">
-      <strong class="d-block">Totalprice: ${{totalPrice}}</strong>
-      <div id="price"></div>
+      <strong class="d-block">Total price: ${{totalPrice}}</strong>
     </div>
   </div>
-
 </template>
 
 <script>
   export default {
     name: "cart",
+    components: {
+      'item': () => import('./cartItem.vue'),
+    },
     data() {
       return {
         cartItems: [],
@@ -48,29 +32,27 @@
         return this.cartItems.reduce((start, current) => start + current.quantity, 0)
       },
       totalPrice() {
-        return this.cartItems.reduce((start, current) => start + current.price, 0)
+        return this.cartItems.reduce((start, current) => start + current.price * current.quantity, 1)
       },
     },
     mounted() {
       this._initData();
-      this._initHandlers();
     },
     methods: {
-      _deleteFromCart(event) {
-        let obj = this._findItem(event.target.dataset.id);
+      _deleteFromCart(obj) {
         this.$parent.putData("/deleteFromBasket.json", obj)
-        .then(res => {
-          if (1 === res.result) {
-            if (obj.quantity > 1) {
-              obj.quantity--;
-              this._rerender();
+          .then(res => {
+            if (1 === res.result) {
+              if (obj.quantity > 1) {
+                obj.quantity--;
+                this._rerender();
+              } else {
+                this.cartItems.splice(this.cartItems.indexOf(obj), 1);
+              }
             } else {
-              this.cartItems.splice(this.cartItems.indexOf(obj), 1);
+              throw Error('Error delete item');
             }
-          }else {
-            throw Error('Error delete item');
-          }
-        })
+          })
       },
       _initData() {
         this.$parent.getData("/getBasket.json")
@@ -78,10 +60,7 @@
             this.cartItems = data.contents;
           });
       },
-      _initHandlers() {
-        this.$root.$on("addToCart", this._addToCart);
-      },
-      _addToCart(obj) {
+      addToCart(obj) {
         this.$parent.putData("/addToBasket.json", obj)
           .then(res => {
             if (1 === res.result) {
@@ -92,7 +71,7 @@
               } else {
                 ++find.quantity;
                 // дальше костыль, чтобы перерендерить
-                this._rerender();
+                //this._rerender();
               }
             } else {
               throw Error('Error add item');
@@ -106,7 +85,7 @@
         this.$forceUpdate();
         //this.cartItems = this.cartItems.filter(() => true);
       }
-    },
+    }
   }
 </script>
 
