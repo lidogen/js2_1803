@@ -1,5 +1,7 @@
 <template>
     <div :class="type === 'catalog' ? 'product-item' : 'cart-item'">
+        <!-- :class="{название класса: value/computed, название класса 2: value/computed, название класса 3: value/computed}" -->
+
         <template v-if="type === 'catalog'">
             <img :src="imgCompute" :alt="item.product_name">
             <div class="desc">

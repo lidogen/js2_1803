@@ -30,32 +30,32 @@ export default {
         getData(url) {
             return fetch(url).then(dataReceived => dataReceived.json())
         },
-        postData(url, obj){
-            try {
-                const response = await fetch(url, {
-                    method: 'POST', // или 'PUT'
-                    body: JSON.stringify(obj), // данные могут быть 'строкой' или {объектом}!
-                    headers: {'Content-Type': 'application/json'}
-                });
-                const json = await response.json()
-                console.log('Успех:', JSON.stringify(json))
-            } catch (error) {
-                console.error('Ошибка:', error)
-            }
-        },
-        changeData(url, obj){
-            try {
-                const response = await fetch(url, {
-                    method: 'PUT', // или 'PUT'
-                    body: JSON.stringify(obj), // данные могут быть 'строкой' или {объектом}!
-                    headers: {'Content-Type': 'application/json'}
-                });
-                const json = await response.json()
-                console.log('Успех:', JSON.stringify(json))
-            } catch (error) {
-                console.error('Ошибка:', error)
-            }
-        }
+        // postData(url, obj){
+        //     try {
+        //         const response = await fetch(url, {
+        //             method: 'POST', // или 'PUT'
+        //             body: JSON.stringify(obj), // данные могут быть 'строкой' или {объектом}!
+        //             headers: {'Content-Type': 'application/json'}
+        //         });
+        //         const json = await response.json()
+        //         console.log('Успех:', JSON.stringify(json))
+        //     } catch (error) {
+        //         console.error('Ошибка:', error)
+        //     }
+        // },
+        // changeData(url, obj){
+        //     try {
+        //         const response = await fetch(url, {
+        //             method: 'PUT', // или 'PUT'
+        //             body: JSON.stringify(obj), // данные могут быть 'строкой' или {объектом}!
+        //             headers: {'Content-Type': 'application/json'}
+        //         });
+        //         const json = await response.json()
+        //         console.log('Успех:', JSON.stringify(json))
+        //     } catch (error) {
+        //         console.error('Ошибка:', error)
+        //     }
+        // }
 
     
     //     postData (url, obj) {
