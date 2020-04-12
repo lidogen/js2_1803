@@ -58,7 +58,6 @@
           })
       },
       addToCart(catalogItem) {
-        debugger
         let obj = this._createFromCatalogItem(catalogItem);// JSON.parse(JSON.stringify(prod)); // must be created NEW OBJECT!
         this.$parent.post("/api/tobasket.json", obj)
           .then(res => {
