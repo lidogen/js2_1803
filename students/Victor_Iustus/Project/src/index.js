@@ -1,5 +1,9 @@
-import app from './public/js/main.js'
 import './public/style/bootstrap.min.css'
 import './public/style/style.css'
 
-app()
+import Vue from 'vue'
+import app from './public/app.vue'
+
+new Vue({
+    render: h => h(app)
+}).$mount('#app')
