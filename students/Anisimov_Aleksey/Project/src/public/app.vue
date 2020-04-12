@@ -2,7 +2,7 @@
   <div>
     <div class="header center">
       <div class="search">
-        <input type="text" v-model="searchStr" maxlength="20" @keyup.enter="checkSearchStr" />
+        <input type="text" v-model="newProduct.product_name" maxlength="20" @keyup.enter="checkSearchStr" />
         <button class="search__button" type="button" @click="checkSearchStr">Искать</button>
       </div>
       
@@ -27,6 +27,10 @@ export default {
     },
     data() {
       return  {
+        newProduct: {
+          product_name: '',
+          price: 0
+        },
         searchStr: '',
         whiteListRegExp: /[^0-9a-zа-я.-\s]/gi, //для строки поиска
       }

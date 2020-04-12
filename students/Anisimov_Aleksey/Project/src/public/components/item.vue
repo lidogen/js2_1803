@@ -24,6 +24,14 @@
 
 <script>
 export default {
+    data() {
+        return {
+            newProduct: {
+                name: '',
+                price: 0
+            }
+        }
+    },
     props: {
         type: {
             type: String,

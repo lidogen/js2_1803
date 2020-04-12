@@ -1,15 +1,16 @@
 const fs = require('fs')
-const path = require('path')
+//const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
-
+const writer = require('./writer')
+const cart = require('./cart')
+const catalog = require('./catalog')
 let server = express()
 let catalogDB = 'server/db/catalog.json'
 let cartDB = 'server/db/cart.json'
 let arr = []
 server.use(express.json())
 server.use(bodyParser.json())
-//console.log(path.resolve())
 
 // fs.stat(catalogDB, (err, stats) => {
 //     if (!err) {
