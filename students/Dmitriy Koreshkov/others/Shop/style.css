@@ -10,35 +10,6 @@ header {
   background-color: grey;
   padding: 10px 20px;
 }
-.search-button {
-  height: 40px;
-  margin: 0 10px 0 0;
-  padding: 0 10px;
-  background-color: #ffffff;
-  border: 1px solid black;
-  border-radius: 0  10px 10px 0;
-  font-size: 16px;
-  outline: none;
-  transition: all 0.3s linear;
-}
-.search-button:hover {
-  background-color: cornflowerblue;
-}
-.search-button:active {
-  background-color: salmon;
-}
-
-.goods-search {
-  height: 38px;
-  padding: 0 10px;
-  margin: 0 -1px 0 0;
-  background-color: #ffffff;
-  border: 1px solid black;
-  border-radius: 10px 0 0 10px;
-  font-size: 16px;
-  line-height: 38px;
-  outline: none;
-}
 
 .cart-button {
   width: 160px;
@@ -59,7 +30,6 @@ header {
 
 .goods-list {
   display: flex;
-  min-height: 100px;
   justify-content: space-around;
   background-color: lightgrey;
   padding: 10px 0;
@@ -79,6 +49,3 @@ header {
   font-weight: bold;
 }
 
-.hidden {
-  display: none;
-}
