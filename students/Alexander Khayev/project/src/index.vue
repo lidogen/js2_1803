@@ -5,12 +5,9 @@
       <div class="logo">{{companyName}}</div>
       <div class="cart">
         <search-menu v-model="searchString" :value="searchString"></search-menu>
-        <button class="btn-cart" @click="show = !show">Cart
-<!--          <span></span>-->
-        </button>
-        <!--        <button class="btn-cart" @click="show = !show">Cart<span>{{this.$refs.cartRef.cartItems.length}}</span></button>-->
+        <button class="btn-cart" @click="show = !show">Cart<span>{{$refs.cart ? $refs.cart.cartItems.length: 0}}</span></button>
         <transition name="fade">
-          <cart v-show="show" ref="cartRef"></cart>
+          <cart ref="cart"></cart>
         </transition>
       </div>
     </header>
@@ -33,13 +30,13 @@
     },
     methods: {
       getData(url) {
-        return fetch(url        )
+        return fetch(url)
           .then(data => data.json())
           .catch(e => {
             this.showDialog('Не удалось загрузить данные');
           })
       },
-      putData(url, obj) {
+      post(url, obj) {
         return fetch(url, {
           method: 'POST',
           headers: {
@@ -64,11 +61,7 @@
         dialogShow: false,
         searchString: "",
         companyName: 'Mini-Super :)',
-      }
-    },
-    computed: {
-      countCart() {
-        // console.dir(this.$refs.cartRef);
+        cartCount: -1,
       }
     },
   }

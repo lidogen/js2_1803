@@ -1,14 +1,11 @@
 <template>
-  <div class="cart-block" v-if="cartItems.length === 0">
-    <h3>Нет данных</h3>
-  </div>
-
-  <div class="cart-block" v-else>
+  <div class="cart-block">
     <div class="d-flex">
       <strong class="d-block">Total items: {{totalItems}} </strong>
     </div>
     <hr>
-    <cartItem v-for="item in cartItems" :key="item.id_product" :item="item" @delete="_deleteFromCart"/>
+    <h3 v-if="cartItems.length === 0">Нет данных</h3>
+    <cartItem v-else v-for="item in cartItems" :key="item.id_product" :item="item" @delete="_deleteFromCart"/>
     <hr>
     <div class="d-flex">
       <strong class="d-block">Total price: ${{totalPrice}}</strong>
@@ -44,10 +41,10 @@
         this.$parent.getData("/api/basket.json")
           .then(data => {
             this.cartItems = data.contents;
-          });
+          })
       },
       _deleteFromCart(cartItem) {
-        this.$parent.putData("/api/delbasket.json", cartItem)
+        this.$parent.post("/api/delbasket.json", cartItem)
           .then(res => {
             if (1 === res.result) {
               if (cartItem.quantity > 1) {
@@ -60,9 +57,9 @@
             }
           })
       },
-      addToCart: function (catalogItem) {
+      addToCart(catalogItem) {
         let obj = this._createFromCatalogItem(catalogItem);// JSON.parse(JSON.stringify(prod)); // must be created NEW OBJECT!
-        this.$parent.putData("/api/tobasket.json", obj)
+        this.$parent.post("/api/tobasket.json", obj)
           .then(res => {
             if (1 === res.result) {
               let find = this._findItem(obj.id_product);
@@ -80,9 +77,10 @@
         return this.cartItems.find(product => +product.id_product === +id);
       },
       _createFromCatalogItem(catalogItem) {
-        let obj = JSON.parse(JSON.stringify(catalogItem));
-        obj.quantity = 1;
-        return obj;
+        return Object.assign({}, catalogItem, {quantity: 1});
+        // let obj = JSON.parse(JSON.stringify(catalogItem));
+        // obj.quantity = 1;
+        // return obj;
       },
     }
   }

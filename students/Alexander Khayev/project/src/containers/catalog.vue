@@ -29,7 +29,7 @@
     },
     methods: {
       _addToCart(item) {
-        this.$parent.$refs.cartRef.addToCart(item);
+        this.$parent.$refs.cart.addToCart(item);
       },
     },
     computed: {
