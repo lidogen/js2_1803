@@ -1,37 +1,41 @@
 <template>
     <div class="products">
-        <item v-for="item of items" :key="item.id_product" :item="item" @add="addToCart"/>
+        <item v-for="item of items" :key="item.id_product" :item="item"/>
+        <item :type="'temp'" @create="createNewItem"/>
     </div>
 </template>
 
 <script>
 import item from '../components/Item.vue'
 export default {
-    components: { item },
-    data(){
-        return{
+    data() {
+        return {
             items: [],
-           // filteredGoods = [],
             url: '/api/catalog'
         }
     },
+    components: { item },
     methods: {
-         addToCart(item) {
+        addToCart(item) {
             this.$parent.$refs.cartRef.addToCart(item)
         },
-         //filterGoods(value){
-            //const regexp = new RegExp(value, 'i')
-           // this.items = this.filteredGoods.filter(good => 
-                //regexp.test(good.product_name))  
-        //} 
+        createNewItem(payload) {
+            this.$parent.postData(this.url, payload)
+                .then(d => {
+                    if(d._id) {
+                        this.items.push({
+                        product_name: payload.name,
+                        price: payload.price,
+                        id_product: d._id
+                    })
+                }
+            })
+        }
     },
-    // computed: {
-
-    // },
-    mounted(){
+    mounted() {
         this.$parent.getData(this.url)
-        .then(d=>{
-            this.items = d
+        .then(data => {
+            this.items = data
         })
     }
 }

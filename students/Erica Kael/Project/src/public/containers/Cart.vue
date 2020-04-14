@@ -1,49 +1,73 @@
 <template>
-      <div class="cart-block ">
+    <div class="cart-block">
         <div class="d-flex">
-            <strong class="d-block">Всего товаров</strong> <div id="quantity">{{this.total}}</div>
+        <strong class="d-block">Всего товаров</strong> <div id="quantity">{{this.total}}</div>
         </div>
         <hr>
-        <item v-for="item of items" :key="item.id_product" :type="'cart'" :item="item" @remove="removeFromCart"/>  
+        <item :type="'cart'" v-for="item of items" :key="item.id_product" :item="item" @remove="removeFromCart"/>
         <hr>
         <div class="d-flex">
-            <strong class="d-block">Общая ст-ть:</strong> <div id="price">{{this.sum}}</div>
+        <strong class="d-block">Общая ст-ть:</strong> <div id="price">{{this.sum}}</div>
         </div>
     </div>
 </template>
+
 <script>
-import item from '../components/Item.vue'
+import item from '../components/Item.vue';
+
 export default {
-    components: { item },
-      data(){
-        return{
+    data() {
+        return {
             items: [],
             url: '/api/cart',
             sum: 0,
             total: 0
         }
     },
-    methods:{
-        addToCart(item){
+    components: { item },
+    methods: {
+        addToCart(item) {
             let id = item.id_product
-            let find = this.items.find(item => item.id_product === id)
-            if(find){
-                find.quantity++
-            }else {
-                 let newItem = Object.assign({}, item, {quantity: 1})
-                this.items.push (newItem)
+            let find = this.items.find (product => product.id_product === id)
+            if (find) {
+                this.$parent.putData(`/api/cart/${find.id_product}`, {delta: 1})
+                .then(stat => {
+                    if (stat.status) {
+                        find.quantity++
+                        this.checkTotalAndSum ()
+                    }
+                })
+            } else {
+                let newItem = Object.assign({}, item, {quantity: 1})
+                this.$parent.postData(this.url, newItem).then(d => {
+                    if (d.status) {
+                        this.items.push (newItem)
+                        this.checkTotalAndSum ()
+                    }
+                })
+                
             }
-            this.checkTotalAndSum ()
         },
-        removeFromCart(item){
+        removeFromCart(item) {
             let id = item.id_product
-            let find = this.items.find (item => item.id_product === id)
-            if (find.quantity > 1){
-                find.quantity--
-            }else{
-                this.items.splice (this.items.indexOf(find), 1)
+            let find = this.items.find (product => product.id_product === id)
+            if (find.quantity > 1) {
+                this.$parent.putData(`/api/cart/${find.id_product}`, {delta: -1})
+                .then(stat => {
+                    if (stat.status) {
+                        find.quantity--
+                        this.checkTotalAndSum ()
+                    }
+                })
+            } else {
+                this.$parent.deleteData(`/api/cart/${find.id_product}`)
+                .then(stat => {
+                    if (stat.status) {
+                        this.items.splice (this.items.indexOf(find), 1)
+                        this.checkTotalAndSum ()
+                    }
+                })
             }
-            this.checkTotalAndSum ()
         },
         checkTotalAndSum () {
             let qua = 0
@@ -56,12 +80,13 @@ export default {
             this.sum = pr
         }
     },
-    mounted(){
+    mounted() {
         this.$parent.getData(this.url)
-        .then(d=>{
-            this.items = d.contents
+        .then(data => {
+            this.items = data.contents
             this.checkTotalAndSum ()
         })
     }
+    
 }
 </script>
