@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import catalog from './containers/Catalog.vue'
-import cart from './containers/Cart.vue'
+import catalog from '../containers/Catalog.vue'
+import cart from '../containers/Cart.vue'
 export default {
     components: { catalog, cart },
     data() {
