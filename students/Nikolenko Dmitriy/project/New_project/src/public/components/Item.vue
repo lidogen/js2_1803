@@ -1,6 +1,6 @@
 <template>
-<div :class="type ==='catalog' ? 'product-item' : 'cart-item'">
-    <template v-if ="type === 'catalog'">            
+<div :class="type.match(/catalog|temp/i) ? 'product-item' : 'cart-item'">
+    <template v-if="type === 'catalog'">            
                     <img :src="imgCompute" :alt="item.product_name">
                     <div class="desc">
                         <h1>{{ item.product_name }}</h1>
@@ -11,7 +11,7 @@
 
 
     </template>
-    <template v-if = "type === 'cart'">           
+    <template v-if="type === 'cart'">           
                     <img :src="imgCompute" alt="">
                     <div class="product-desc">
                         <p class="product-title">{{ item.product_name }}</p>
@@ -23,6 +23,19 @@
                     </div>
 
     </template>
+    <template v-if="type === 'temp'">
+            <img :src="'https://placehold.it/300x200'">
+            <div class="desc">
+                <label>
+                    <input type="text" placeholder="Item name" v-model="newProduct.product_name" class="w-50">
+                </label>
+                <label>
+                   <input type="number" placeholder="Item price" v-model="newProduct.price" class="w-50"> 
+                </label>
+                <button class="buy-btn" name="buy-btn" @click="createNew()">Добавить</button>
+            </div>
+
+    </template>
 
 </div>
 
@@ -30,13 +43,21 @@
 
 <script>
 export default {
-  //  props: ['type'],
+
+    data() {
+        return {
+            newProduct: {
+                product_name: '',
+                price: 0
+            }
+        }
+    },
 
     props: {
         type:  {
             type: String,
             default: 'catalog'
-            //default: () => 'catalog'
+            
         },
         item: {
             type: Object
@@ -46,6 +67,14 @@ export default {
         imgCompute() {
             return this.type === 'catalog' ? 'https://placehold.it/300x200' : 'https://placehold.it/100x80'
         }
+    },
+    methods: {
+        createNew() {
+            this.$emit('create', this.newProduct);
+            this.newProduct.product_name = '';
+            this.newProduct.price = 0;
+        }
+        
     }
 
     
