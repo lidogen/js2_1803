@@ -5,5 +5,9 @@ module.exports = {
         catalog.push(item)
         newCatalog = catalog
         return { newCatalog, _id: item.id_product }
+    },
+    lastIndex(cartDB) {
+        
+
     }
 }
