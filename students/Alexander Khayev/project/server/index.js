@@ -10,12 +10,22 @@ server.get('/', (request, response) => {
   response.send('Hello "Teapot" :)');
 })
 
-function catalog(okCb = null, errCb = null) {
+function getCatalog(okCb = null, errCb = null) {
   fs.readFile("./server/db/catalogData.json", 'utf-8', (err, data) => {
     if (err) {
-      errCb(err, data)
+      errCb(err)
     } else {
-      okCb(err, data)
+      okCb(JSON.parse(data))
+    }
+  })
+}
+
+function getBasket(okCb = null, errCb = null) {
+  fs.readFile("./server/db/getBasket.json", 'utf-8', (err, data) => {
+    if (err) {
+      errCb(err)
+    } else {
+      okCb(JSON.parse(data))
     }
   })
 }
@@ -29,104 +39,91 @@ function save(data, file, cbOk, cbErr = null) {
       cbOk();
     }
   })
-
 }
 
 // return all catalog
 server.get('/catalog.json', (req, res) => {
-  catalog((e, d) => {res.send(d)})
+  getCatalog((d) => {
+    res.send(d)
+  })
 })
 
 // create new item in catalog
 server.post('/addtocatalog.json', (req, res) => {
-  catalog((e, d) => {
-      let catalog = JSON.parse(d);
+  getCatalog((catalog) => {
       let id = 1 + Math.max(...catalog.map(el => el.id_product));
       catalog.push(Object.assign({}, req.body, {id_product: id}));
       save(catalog, "./server/db/catalogData.json",
         () => res.send(catalog),
         er => res.sendStatus(500, 'wrong saving data'))
     },
-    (e, d) => {
+    err => {
       res.sendStatus(500, 'catalog not found')
     })
 })
 
-server.get('/basket.json', (request, response) => {
-  fs.readFile("./server/db/getBasket.json", 'utf-8',
-    (err, data) => {
-      if (!err) {
-        // response.json(data);
-        response.send(data)
-      }
-    })
+server.get('/basket.json', (req, res) => {
+  getBasket(
+    ok => res.send(ok),
+    err => res.sendStatus(500, "get basket failed")
+  )
 })
 
 // remove item from basket fully
 server.delete('/delbasket.json/:id', (request, response) => {
-  fs.readFile("./server/db/getBasket.json", 'utf-8',
-    (err, data) => {
-      if (!err) {
-        let basket = JSON.parse(data);
-        let oldBasket = basket.contents
-        basket.contents = oldBasket.filter(b => b.id_product !== +request.params.id);
-        if (oldBasket.length === basket.contents.length) {
-          response.sendStatus(500, 'wrong removed item')
-        } else {
-          fs.writeFile("./server/db/getBasket.json", JSON.stringify(basket, null, " "), err => {
-            response.json({'result': err ? 0 : 1})
-          })
-        }
+  getBasket(
+    basket => {
+      let oldBasket = basket.contents
+      basket.contents = oldBasket.filter(b => b.id_product !== +request.params.id);
+      if (oldBasket.length === basket.contents.length) {
+        response.sendStatus(500, 'wrong removed item')
       } else {
-        response.json({'result': 0})
+        save(basket, "./server/db/getBasket.json",
+          () => response.send({'result': 1}),
+          err => response.send({'result': 0})
+        )
       }
-    })
+    },
+    err => response.json({'result': 0})
+  );
 })
 
 // put new item to basket
-server.post('/tobasket.json', (request, response) => {
-  let addObj = request.body;
-  fs.readFile("./server/db/getBasket.json", 'utf-8',
-    (err, data) => {
-      if (!err) {
-        let basket = JSON.parse(data);
-        let inBasket = basket.contents.find(b => b.id_product === addObj.id_product);
-        if (inBasket) { // товара не доожно быть в корзине
-          response.sendStatus(500, "Can't create existing item")
-        } else {
-          basket.contents.push(Object.assign({}, addObj, {quantity: 1}));
-          fs.writeFile("./server/db/getBasket.json", JSON.stringify(basket, null, " "), err => {
-            response.json({'result': err ? 0 : 1})
-          })
-        }
+server.post('/tobasket.json', (req, res) => {
+  getBasket(
+    basket => {
+      let inBasket = basket.contents.find(b => b.id_product === req.body.id_product);
+      if (inBasket) { // товара не должно быть в корзине
+        res.sendStatus(500, "Can't create existing item")
       } else {
-        response.json({'result': 0})
+        basket.contents.push(Object.assign({}, req.body, {quantity: 1}));
+        save(basket, "./server/db/getBasket.json",
+          () => res.json({"result": 1}),
+          err => res.json({"result": 0}))
       }
-    })
+    },
+    err => res.json({'result': 0})
+  )
 })
 
 // change quantity for item in basket
-server.put('/changecart.json/:id', (request, response) => {
-  let Obj = request.body;
-  fs.readFile("./server/db/getBasket.json", 'utf-8',
-    (err, data) => {
-      if (!err) {
-        let basket = JSON.parse(data);
-        let delta = request.body.delta;
-        let id = +request.params.id;
-        let inBasket = basket.contents.find(b => b.id_product === id);
-        if (inBasket.quantity + delta <= 0) {
-          response.sendStatus(500, "Can't remove unexisting item")
-        } else {
-          inBasket.quantity += delta;
-          fs.writeFile("./server/db/getBasket.json", JSON.stringify(basket, null, " "), err => {
-            response.json({'result': err ? 0 : 1})
-          })
-        }
+server.put('/changecart.json/:id', (req, res) => {
+  getBasket(
+    basket=>{
+      let delta = req.body.delta;
+      let id = +req.params.id;
+      let inBasket = basket.contents.find(b => b.id_product === id);
+      if (inBasket.quantity + delta <= 0) {
+        res.sendStatus(500, "Can't remove unexisting item")
       } else {
-        response.json({'result': 0})
+        inBasket.quantity += delta;
+        save(basket, "./server/db/getBasket.json",
+          ()=>res.json({'result': 1}),
+          err=>res.json({'result': 0 }))
       }
-    })
+    },
+    err=>res.json({'result': 0})
+  )
 })
 
 server.listen(8880, () => {

@@ -37,7 +37,6 @@
         this.$parent.$refs.cart.addToCart(item);
       },
       createNewProduct(prod) {
-        debugger
         this.$parent.postData("/api/addtocatalog.json", prod)
           .then(data => {
             this.items = data;

@@ -69,16 +69,17 @@
       addToCart(catalogItem) {
         let find = this._findItem(catalogItem.id_product);
         if (find === undefined) {
-          this.$parent.postData("/api/tobasket.json", find)
+          let newObj = this._createFromCatalogItem(catalogItem)
+          this.$parent.postData("/api/tobasket.json", newObj)
             .then(r => {
-              if (1 === r.res) {
-                this.cartItems.push(this._createFromCatalogItem(catalogItem));// JSON.parse(JSON.stringify(prod)); // must be created NEW OBJECT!)
+              if (1 === r.result) {
+                this.cartItems.push(newObj);// JSON.parse(JSON.stringify(prod)); // must be created NEW OBJECT!)
               }
             })
         } else {
           this.$parent.putData(`/api/changecart.json/${find.id_product}`, {delta: 1})
             .then(r => {
-                if (r.res == 1) {
+                if (1 === r.result) {
                   ++find.quantity;
                 }
               }
