@@ -6,100 +6,92 @@ let express = require('express');
 let server = express();
 server.use(express.json());
 
+const Catalog = require('./catalog.js');
+const Basket = require('./basket.js');
+const db = require('./db.js');
+
+
 server.get('/', (request, response) => {
   response.send('Hello "Teapot" :)');
 })
 
-function getCatalog(okCb = null, errCb = null) {
-  fs.readFile("./server/db/catalogData.json", 'utf-8', (err, data) => {
-    if (err) {
-      errCb(err)
-    } else {
-      okCb(JSON.parse(data))
-    }
-  })
+//*** Factory ***************************************************************************************
+
+class Factory {
+  constructor() {
+  }
+
+  // catalog by Promises & Classes, for test
+  static getCatalog() {
+    return new Promise((res, rej) => {
+      let catalog = new Catalog([]);
+      catalog.read(obj => res(obj), err => rej(err))
+    })
+  }
+
+  // basket by callbacks & functions
+  static getBasket(okCb = null, errCb = null) {
+    db.readFromDB("./server/db/getBasket.json",
+      data => okCb(new Basket(data)), errCb)
+  }
 }
 
-function getBasket(okCb = null, errCb = null) {
-  fs.readFile("./server/db/getBasket.json", 'utf-8', (err, data) => {
-    if (err) {
-      errCb(err)
-    } else {
-      okCb(JSON.parse(data))
-    }
-  })
-}
-
-function save(data, file, cbOk, cbErr = null) {
-  fs.writeFile(file, JSON.stringify(data, null, " "), err => {
-    //response.json(catalog)
-    if (err) {
-      cbErr(err)
-    } else {
-      cbOk();
-    }
-  })
-}
+//*** Catalog methods *******************************************************************************
 
 // return all catalog
 server.get('/catalog.json', (req, res) => {
-  getCatalog((d) => {
-    res.send(d)
-  })
+  Factory.getCatalog()
+    .then(cat => {
+      res.send(cat.data)
+    })
 })
 
 // create new item in catalog
 server.post('/addtocatalog.json', (req, res) => {
-  getCatalog((catalog) => {
-      let id = 1 + Math.max(...catalog.map(el => el.id_product));
-      catalog.push(Object.assign({}, req.body, {id_product: id}));
-      save(catalog, "./server/db/catalogData.json",
-        () => res.send(catalog),
-        er => res.sendStatus(500, 'wrong saving data'))
-    },
-    err => {
-      res.sendStatus(500, 'catalog not found')
-    })
+  Factory.getCatalog()
+    .then(catalogObj => catalogObj.push(req.body)
+      .then(() => catalogObj.save()
+        .then(() => res.send(catalogObj.data))
+        .catch(() => res.sendStatus(500, 'wrong saving data'))))
+    .catch(err => res.sendStatus(500, 'catalog not found'))
 })
 
+//*** Basket methods ********************************************************************************
+
 server.get('/basket.json', (req, res) => {
-  getBasket(
-    ok => res.send(ok),
+  Factory.getBasket(
+    basket => res.send(basket.data),
     err => res.sendStatus(500, "get basket failed")
   )
 })
 
 // remove item from basket fully
 server.delete('/delbasket.json/:id', (request, response) => {
-  getBasket(
+  Factory.getBasket(
     basket => {
-      let oldBasket = basket.contents
-      basket.contents = oldBasket.filter(b => b.id_product !== +request.params.id);
-      if (oldBasket.length === basket.contents.length) {
-        response.sendStatus(500, 'wrong removed item')
+      if (basket.delete(+request.params.id)) {
+        basket.save()
+          .then(() => response.send({'result': 1}))
+          .catch(err => response.send({'result': 0}))
       } else {
-        save(basket, "./server/db/getBasket.json",
-          () => response.send({'result': 1}),
-          err => response.send({'result': 0})
-        )
+        response.sendStatus(500, 'wrong removed item')
       }
     },
-    err => response.json({'result': 0})
+    err => response.send({'result': 0})
   );
 })
 
 // put new item to basket
 server.post('/tobasket.json', (req, res) => {
-  getBasket(
+  Factory.getBasket(
     basket => {
-      let inBasket = basket.contents.find(b => b.id_product === req.body.id_product);
-      if (inBasket) { // товара не должно быть в корзине
-        res.sendStatus(500, "Can't create existing item")
+      if (basket.addNew(Object.assign({}, req.body, {quantity: 1})))
+      {
+        basket.save()
+          .then(() => res.send({'result': 1}))
+          .catch(err => res.send({'result': 0}))
       } else {
-        basket.contents.push(Object.assign({}, req.body, {quantity: 1}));
-        save(basket, "./server/db/getBasket.json",
-          () => res.json({"result": 1}),
-          err => res.json({"result": 0}))
+        res.sendStatus(500, "Can't create existing item")
       }
     },
     err => res.json({'result': 0})
@@ -108,21 +100,17 @@ server.post('/tobasket.json', (req, res) => {
 
 // change quantity for item in basket
 server.put('/changecart.json/:id', (req, res) => {
-  getBasket(
-    basket=>{
-      let delta = req.body.delta;
-      let id = +req.params.id;
-      let inBasket = basket.contents.find(b => b.id_product === id);
-      if (inBasket.quantity + delta <= 0) {
+  Factory.getBasket(
+    basket => {
+      if (basket.changeQuantity(+req.params.id, +req.body.delta)) {
+        basket.save()
+          .then(() => res.send({'result': 1}))
+          .catch(err => res.send({'result': 0}))
+      }else{
         res.sendStatus(500, "Can't remove unexisting item")
-      } else {
-        inBasket.quantity += delta;
-        save(basket, "./server/db/getBasket.json",
-          ()=>res.json({'result': 1}),
-          err=>res.json({'result': 0 }))
       }
     },
-    err=>res.json({'result': 0})
+    err => res.json({'result': 0})
   )
 })
 
