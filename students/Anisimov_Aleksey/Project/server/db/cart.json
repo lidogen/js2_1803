@@ -1,1 +1,28 @@
-[{"id":3,"title":"Solid State Drive","quantity":1,"price":2199,"summ":2199}]
+{
+  "contents": [
+    {
+      "id_product": 2,
+      "product_name": "Processor i10",
+      "price": 4265,
+      "quantity": 1
+    },
+    {
+      "id_product": 2,
+      "product_name": "Processor i10",
+      "price": 4265,
+      "quantity": 1
+    },
+    {
+      "id_product": 3,
+      "product_name": "Solid State Drive",
+      "price": 2199,
+      "quantity": 1
+    },
+    {
+      "id_product": 3,
+      "product_name": "Solid State Drive",
+      "price": 2199,
+      "quantity": 1
+    }
+  ]
+}
