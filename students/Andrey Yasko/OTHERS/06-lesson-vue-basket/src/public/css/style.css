@@ -16,12 +16,6 @@ button:focus{
     text-transform: uppercase;
     font-weight: bold;
 }
-
-.input{
-    width: 150px;
-    padding: 0 10px;
-    margin-bottom: 8px;
-}
 .btn-cart{
     background-color: #fafafa;
     padding: 10px 20px;
@@ -36,6 +30,7 @@ button:focus{
     border-color: #fafafa;
     color: #fafafa;
 }
+
 .btn-cart, .logo{
     align-self: center;
 }

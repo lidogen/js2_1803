@@ -1,5 +1,5 @@
 {
- "amount": 95800,
+ "amount": 51100,
  "countGoods": 4,
  "contents": [
   {
@@ -18,7 +18,13 @@
    "id_product": 123,
    "product_name": "Ноутбук",
    "price": 45600,
-   "quantity": 2
+   "quantity": 1
+  },
+  {
+   "id_product": 456,
+   "product_name": "Флешка",
+   "price": 900,
+   "quantity": 1
   }
  ]
 }
