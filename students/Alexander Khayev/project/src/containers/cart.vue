@@ -56,7 +56,7 @@
               }
             })
         } else {
-          this.$parent.putData(`/api/delbasket.json/${cartItem.id_product}`)
+          this.$parent.deleteData(`/api/delbasket.json/${cartItem.id_product}`)
             .then(res => {
               if (1 === res.result) {
                 this.cartItems.splice(this.cartItems.indexOf(cartItem), 1);
@@ -69,7 +69,7 @@
       addToCart(catalogItem) {
         let find = this._findItem(catalogItem.id_product);
         if (find === undefined) {
-          this.$parent.post("/api/tobasket.json", find)
+          this.$parent.postData("/api/tobasket.json", find)
             .then(r => {
               if (1 === r.res) {
                 this.cartItems.push(this._createFromCatalogItem(catalogItem));// JSON.parse(JSON.stringify(prod)); // must be created NEW OBJECT!)
