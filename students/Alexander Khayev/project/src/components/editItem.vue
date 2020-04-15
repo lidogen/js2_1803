@@ -1,6 +1,7 @@
 <template>
   <div class="product-item">
     <div class="desc">
+      <img :src="img" v-model="img" alt="" />
       <label>
         Name <input type="text" v-model="product_name" />
       </label>
@@ -22,6 +23,7 @@
           return {
             product_name: "",
             price: 0,
+            img: "http://profjs-img.seoadministrator.ru/none.jpeg"
           }
       },
       methods: {
@@ -31,7 +33,7 @@
           },
           createNew() {
             this.$emit("createNewProduct", {
-              product_name: this.product_name, price: +this.price, imgUrl: ""});
+              product_name: this.product_name, price: +this.price, img: this.img});
             this.product_name  = "";
             this.price = 0;
           }
