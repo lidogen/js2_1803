@@ -11,8 +11,8 @@
                 </form>
                 <!-- button class="btn-cart" @click="showcart = !showcart">Cart</button>
                 <div class="cart-block" v-show="showcart" -->
-                <button class="btn-cart">Cart</button>
-                    <cart ref="cartRef" />
+                <button class="btn-cart" @click="showCart = !showCart">Cart</button>
+                <cart v-show="showCart" ref="cartRef" />
             </div>
         </header>
 
@@ -31,10 +31,15 @@
             catalog,
             cart
         },
+        data() {
+            return {
+                showCart: false
+            }
+        },
         methods: {
             getData(url) {
                 return fetch(url)
-                .then(dataReceived => dataReceived.json())
+                    .then(dataReceived => dataReceived.json())
             }
         }
     }

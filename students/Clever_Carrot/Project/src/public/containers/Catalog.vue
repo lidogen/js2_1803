@@ -5,27 +5,32 @@
 </template>
 
 <script>
-import item from '../components/Item.vue'
-export default {
-    components: { item },
-    data() {
-        return {
-            items: [],
-            url: 'https://raw.githubusercontent.com/kekima/static/master/js2hw/json/catalogData.json'
+    import item from '../components/Item.vue'
+    export default {
+        components: {
+            item
+        },
+        data() {
+            return {
+                items: [],
+                url: '/api/catalog'
+                //url: 'https://raw.githubusercontent.com/kekima/static/master/js2hw/json/catalogData.json'
+            }
+        },
+        methods: {
+            addToCart(item) {
+                this.$parent.$refs.cartRef.addToCart(item)
+            }
+        },
+        // computed: {
+
+        // },
+        mounted() {
+            this.$parent.getData(this.url)
+                .then(data => {
+                    this.items = data
+                })
+            // console.log(this)
         }
-    },
-    // methods: {
-            
-    // },
-    // computed: {
-        
-    // },
-    mounted() {
-        this.$parent.getData(this.url)
-        .then(data => {
-            this.items = data
-        })
-        // console.log(this)
     }
-}
 </script>

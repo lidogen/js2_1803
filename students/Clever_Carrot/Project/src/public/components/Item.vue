@@ -1,22 +1,22 @@
 <template>
-    <div class="type === 'catalog' ? 'product-item' : 'cart-item'">
+    <div :class="type === 'catalog' ? 'product-item' : 'cart-item'">
         <template v-if="type === 'catalog'">
             <img :src="imgCompute" :alt="item.product_name">
             <div class="desc">
                 <h1>{{ item.product_name }}</h1>
-                <p>{{ item.price }} &#8381</p>
-                <button class="buy-btn">Купить</button>
+                <p>{{ item.price }} &#8381;</p>
+                <button class="buy-btn" @click="$parent.addToCart(item)">Купить</button>
             </div>
         </template>
         <template v-if="type === 'cart'">
             <img :src="imgCompute" :alt="item.product_name">
             <div class="product-desc">
-                <p>{{ item.product_name }}</p>
-                <p>{{ item.quantity }}</p>
-                <p>{{ item.price }} &#8381</p>
+                <p class="product-title">{{ item.product_name }}</p>
+                <p class="product-quantity">{{ item.quantity }}</p>
+                <p class="product-item-price">{{ item.price }} &#8381;</p>
             </div>
-                                                <div class="right-block">
-                <button class="del-btn">&times;</button>
+            <div class="right-block">
+                <button class="del-btn" @click="$emit('remove', item)">&times;</button>
             </div>
         </template>
     </div>
