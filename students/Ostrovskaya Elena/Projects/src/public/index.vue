@@ -8,7 +8,7 @@
                 <cart ref="cart"  v-show="seenCart"/>
             </div>
         </header>
-        <main >
+        <main >     
             <catalog ref="catalog"/>
         </main>
     </div>
