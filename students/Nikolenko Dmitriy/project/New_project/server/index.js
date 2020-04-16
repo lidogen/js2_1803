@@ -1,12 +1,18 @@
 let fs = require('fs');
 let express = require('express');
-let bodyParser = require('body-parser')
 let server = express();
+
+let cart = require('./cart.js')
+let catalog = require('./catalog.js')
 let catalogDb = './server/db/catalog.json'
 let cartDb = './server/db/cart.json'
+
+let writer = require('./writer.js')
+
+
+
 server.use(express.json());
-//server.use(bodyParser.urlencoded({ extended: false }));
-server.use(bodyParser.json());
+
 
 server.get('/catalog', (req, res) => {
     fs.readFile(catalogDb, 'utf-8', (err, data) => {
@@ -24,33 +30,75 @@ server.get('/cart', (req, res) => {
 })
 
 server.post('/cart', (req, res) => {
-        fs.readFile(cartDb, 'utf-8', (err, data) => {
-            if(!err) {
-                let cart = JSON.parse(data);
-                let item = req.body;
-                cart.push(item);
-             writeTo(JSON.stringify(cart, null, ' ', cartDb, res))
-               } else {
-                   console.log('error')
-               }      
-   })
+    fs.readFile(cartDb, 'utf-8', (err, data) => {
+        if(!err) {
+            let newCart = cart.add(JSON.parse(data), req.body)
+            writer(cartDb, newCart)
+            .then(status => {
+                if(status === true) {
+                    res.json({status: 1})
+                } else {
+                    res.sendStatus(500, 'Error write data')
+                }
+            })
+        } else {
+            res.sendStatus(404, 'DB catalog not found')
+        }
+    } )
 })
-function writeTo(obj, file, res) {
-    fs.writeFile(file, obj, (err) => {
-        if(err) {
-            res.send('{"result": 0}')
-          } else {
-           res.send('{"result": 1}')
-          }          
-      })
-      }
-
-server.listen(8080, () => {
-    console.log('Server listen @ port 8080')
+server.post('/catalog', (req, res) => {
+    
+    fs.readFile(catalogDb, 'utf-8', (err, data) => {
+        if(!err) {
+            let {newCatalog, _id} = catalog.add(JSON.parse(data), req.body)
+            writer(catalogDb, newCatalog)
+            .then(status => {
+                if(status === true) {
+                    res.json({_id})
+                } else {
+                    res.sendStatus(500, 'Error write data')
+                }
+            })
+        } else {
+            res.sendStatus(404, 'DB catalog not found')
+        }
+    } )
 })
-
-
-
+server.put('/cart/:id', (req, res) => {
+    fs.readFile(cartDb, 'utf-8', (err, data) => {
+        if(!err) {
+            let newCart = cart.change(JSON.parse(data), req)
+            writer(cartDb, newCart)
+            .then(status => {
+                if(status === true) {
+                    res.json({status: 1})
+                } else {
+                    res.sendStatus(500, 'Error write data')
+                }
+            })
+        } else {
+            res.sendStatus(404, 'DB catalog not found')
+        }
+    } )
+})
+server.delete('/cart/:id', (req, res) => {
+    fs.readFile(cartDb, 'utf-8', (err, data) => {
+        if(!err) {
+            let newCart = cart.delete(JSON.parse(data), req)
+            writer(cartDb, newCart)
+            .then(status => {
+                if(status === true) {
+                    res.json({status: 1})
+                } else {
+                    res.sendStatus(500, 'Error write data')
+                }
+            })
+        } else {
+            res.sendStatus(404, 'DB catalog not found')
+        }
+    } )
+})
+server.listen(8080, () => { console.log('Server listen @ port 8080')})
 
 /*
 let readFile = '';

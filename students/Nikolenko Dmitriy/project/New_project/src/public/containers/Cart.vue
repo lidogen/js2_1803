@@ -15,7 +15,7 @@ export default {
         return {
             items: [],
             url: '/api/cart'
-           // url: 'https://raw.githubusercontent.com/Dmitriy-Nikolenko/online-store-api/master/responses/getBasket.json'
+          
         }     
     },
       components: {item},
@@ -23,7 +23,7 @@ export default {
     mounted() {
         this.$parent.getData(this.url)
          .then(data => {
-             this.items = data
+             this.items = data.contents
          })
     } , 
        methods: {
@@ -31,30 +31,42 @@ export default {
             let id = item.id_product;
             let find = this.items.find (product => product.id_product === id);
             if (find) {
-                find.quantity++; 
+              this.$parent.putData(`/api/cart/${find.id_product}`, {delta: 1})
+              .then(stat => {
+                if(stat.status) {
+                  find.quantity++; 
+                }
+              })
+              
             } else {
+              
               let newItem = Object.assign({}, item, {quantity: 1})
-              this.items.push (newItem);
+              this.$parent.postData(this.url, newItem).then(d => {
+                if(d.status) {
+                this.items.push (newItem);
+                }
+              })
+             
         }   
-        let request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
-          if(request.readyState == 4 && request.status == 200) {
-            document.getElementById("app").innerHTML=request.responseText;
-          }
-          
-        }
-        request.open("POST", this.url, true);
-        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        request.send(item);
-
     },
         deleteProduct (item) {
                       let id = item.id_product;
                         let find = this.items.find (product => product.id_product === id);
                         if (find.quantity > 1) {
-                      find.quantity--;
+                                   this.$parent.putData(`/api/cart/${find.id_product}`, {delta: -1})
+              .then(stat => {
+                if(stat.status) {
+                  find.quantity--; 
+                }
+              })
                      } else {
-                        this.items.splice (this.items.indexOf(find), 1);
+                              this.$parent.deleteData(`/api/cart/${find.id_product}`)
+                              .then(stat => {
+                if(stat.status) {
+                    this.items.splice (this.items.indexOf(find), 1);
+                }
+              })
+                     
                    }                         
                            }
                     
