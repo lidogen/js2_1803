@@ -1,6 +1,7 @@
 <template>
     <div class="products">
         <item v-for="item of items" :key="item.id_product" :item="item"/>
+        <item :type="'temp'" @create="createNewItem"/>
     </div>
 </template>
 
@@ -11,7 +12,8 @@ export default {
     data() {
         return {
             items: [],
-            url: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json'
+            url: '/api/catalog'
+            // url: 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json'
         }
     },
     // methods: {
@@ -25,6 +27,24 @@ export default {
         .then(data => {
             this.items = data
         })
+        //console.log(this)
+    },
+    methods: {
+        addToCart(item) {
+            this.$parent.$refs.cartRef.addToCart(item)
+        },
+        createNewItem(payload) {
+            this.$parent.postData(this.url, payload)
+                .then(d => {
+                    if(d._id) {
+                        this.items.push({
+                        product_name: payload.name,
+                        price: payload.price,
+                        id_product: d._id
+                    })
+                }
+            })
+        }
     }
 }
 </script>
