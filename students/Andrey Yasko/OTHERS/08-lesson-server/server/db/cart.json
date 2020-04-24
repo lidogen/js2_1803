@@ -1,0 +1,16 @@
+{
+ "contents": [
+  {
+   "id_product": 123,
+   "product_name": "Ноутбук1",
+   "price": 45600,
+   "quantity": 6
+  },
+  {
+   "id_product": 124,
+   "product_name": "Ноутбук2",
+   "price": 55600,
+   "quantity": 3
+  }
+ ]
+}
